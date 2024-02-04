@@ -68,5 +68,29 @@ x %>%
   theme_dark() +
   theme(axis.text = element_text(angle = 120, face="italic"))
 
+library(tidyverse)
+
+#converting expressions into pipe format
+ iris$Species %>%
+   stringr::str_to_title() %>% 
+   unique()
+ 
+ iris$Sepal.Length %>% 
+   round(,0) %>% 
+   max()
+ 
+ c(100,0,5) %>% 
+   rnorm() %>% 
+   abs() %>% 
+   mean()
+ 
+seq(1,100,0.01) %>% 
+  round(,1) %>%
+  median()
+  
+
+
+
+
 
 
