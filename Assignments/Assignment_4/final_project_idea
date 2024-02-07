@@ -1,0 +1,17 @@
+Tayler Fearn  
+
+My final project idea:
+For my final project I will create a biencoder CNN in R. This will be an R version
+of a python one that I am making for the research I am doing with you. It will 
+have the goal of detecting ecological processes at play in mircobial communties
+through analysis of before and after of resident comuunites being introduced
+a donor community.
+
+Data:
+The data for this will be proportions of microbial communities that are transformed 
+through DeepInsight into images that can then be processed by the CNN. 
+You can find example data of resident community matices, donor intial matrices 
+and then resultant donor communties. An example graph of what this might look like
+is bar graph where the output of the CNN (7 outputs) will graph the decimal 
+numbers that are predicted on each bar graph. I will include a sample graph that shows sample
+output. 
