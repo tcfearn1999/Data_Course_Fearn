@@ -102,6 +102,7 @@ ggsave("./plot_example.png",dpi = 200,plot=p3) # saves it as a png. After the co
 
 
 ##### Class 10 Thursday 8 February #####
+df <- read.csv("~/Data_Course_Fearn/Data/wide_income_rent.csv")
 
 df <- read.csv("./Data/wide_income_rent.csv")
 
