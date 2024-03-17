@@ -98,6 +98,103 @@ aov(data = penguins,
 #the many trees are a forest 
 
 
+#March 7####
+
+
+
+#show and tell for pdfs
+#installed.packages("pdftools")
+#can use to extract info, add signature and combine pdfs 
+#play around with as it can help avoid using adobe 
+
+
+library(tidyverse)
+library(easystats)
+library(broom)
+library(caret)
+library(modelr)
+library(kableExtra)
+
+mod1 <- mpg %>% 
+  glm(data=.,
+      formula = cty ~ displ + drv ) #fit model to data, displ and drv have no interaction 
+broom::tidy(mod1) #turns model output into a data frame
+
+summary(mod1)
+
+#creates interactive reports
+broom::tidy(mod1) %>% 
+  kableExtra::kable() %>% 
+  kableExtra::kable_classic(lightable_options = 'hover')
+
+#perfect model is a line 
+add_predictions(mpg, mod1) %>% 
+  ggplot(aes(x=pred, y=cty))+
+  geom_point()
+
+#plot residuals to see how far off we are
+add_residuals(mpg, mod1) %>% 
+  ggplot(aes(x=resid, y=cty))+
+  geom_point()
+#the above model is off for trucks because there are less in our dataset
+
+#cross-validation: test your model on new data (that you haven't seen and has actual answers)
+#train it on 80% of mpg dataset 
+#test on 205 of mpg dataset
+
+#randomly sample rows 
+mpg$drv %>% table
+
+#need to sample from all groups randomly
+#takes into account the stratification of your data
+
+#the p parametrer is how much of the data you are training on. .8 is typicall but depends on data
+id <- caret::createDataPartition(mpg$cty, p = .8, list = FALSE)
+#the above outputs rows from dataset
+
+train <- mpg[id,]
+test <- mpg[-id,]
+
+#train model on training set
+mod2 <- glm(data= train,
+            formula = mod1$formula)
+add_predictions(test, mod2) %>% 
+  mutate(error = abs(pred - cty)) %>% 
+  pluck('error') %>% 
+  summary()
+#the above show that our model was off on average by 1.4 mpg
+#the above is the real test 
+
+#model that trained on a subset didn't do as well 
+#because its already seen the data
+add_predictions(test, mod1) %>% 
+  mutate(error = abs(pred - cty)) %>% 
+  pluck('error') %>% 
+  summary()
+
+#train it on as much data as possible 
+#would use model 1 to predict with future validation 
+#cross-validation doesn't change your model at all.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
