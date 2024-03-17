@@ -1,0 +1,64 @@
+library(tidyverse)
+library(janitor)
+library(gganimate)
+
+dat <- read_csv("../../Data/BioLog_Plate_Data.csv")
+
+#Cleans this data into tidy (long) form (pivot longer)
+
+#pivot longer the Hr data into one column with the hour in another column
+
+dat <- dat %>%
+  pivot_longer(starts_with("Hr_"),
+               names_to = "hour",
+               values_to = "absorbance_values") %>% 
+  mutate(hour = case_when(hour=="Hr_24"~24,
+                           hour=="Hr_48"~48,
+                          hour =="Hr_144"~144))
+dat <- clean_names(dat)
+
+
+#Creates a new column specifying whether a sample is from soil or water 
+(mutate)
+
+dat <- 
+dat %>% 
+  mutate(medium = case_when(sample_id == "Clear_Creek"~'water',
+                            sample_id == "Waste_Water"~'water',
+                            sample_id == "Soil_1"~"soil",
+                            sample_id == "Soil_2"~"soil"))
+
+#Generates a plot that matches this one (note just plotting dilution == 
+0.1)
+
+plot <- dat %>% 
+  filter(dilution == 0.1) %>% 
+  ggplot(aes(x = hour, y = absorbance_values, color = medium))+
+  geom_smooth(aes(group=medium),se = FALSE)+
+  facet_wrap(~substrate)
+
+#Generates an animated plot that matches this one (absorbance values are 
+mean of all 3 replicates for each group):
+#This plot is just showing values for the substrate “Itaconic Acid” 
+(gganimate)
+
+dat2 <- dat %>% 
+  filter(substrate == "Itaconic Acid") %>% 
+  group_by(sample_id, hour) %>% 
+  summarize(mean_abs_val = mean(absorbance_values)) %>% 
+  full_join(dat)
+
+
+dat2 %>% 
+  ggplot(aes(x = hour, y = mean_abs_val, color = sample_id, group = 
+sample_id))+
+  geom_path()+
+  facet_wrap(~dilution)+
+  transition_reveal(hour)+
+  labs(title = "hour: {frame_time}", y = "mean absorbancy values")
+  
+
+anim_save("./ItaconicAcid_Absorbancy.gif")
+
+
+
